@@ -13,9 +13,12 @@ class MoviesController < ApplicationController
 
   def update
     @movie = Movie.find(params[:id])
-    @movie.update(event_params)
 
-    redirect_to @movie
+    if @movie.update(movie_params)
+      redirect_to @movie
+    else
+      render :edit
+    end
   end
 
   def new
@@ -23,10 +26,12 @@ class MoviesController < ApplicationController
   end
 
   def create
-    @movie = Movie.new(event_params)
-    @movie.save
-
-    redirect_to @movie
+    @movie = Movie.new(movie_params)
+    if @movie.save
+      redirect_to @movie
+    else
+      render :new
+    end
   end
 
   def destroy
@@ -38,7 +43,7 @@ class MoviesController < ApplicationController
 
   private
 
-  def event_params
+  def movie_params
     params.require(:movie).
       permit(:title, :description, :rating, :released_on, :total_gross,
                                           :director, :duration, :image_file_name)
